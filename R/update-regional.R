@@ -17,7 +17,7 @@ source(here::here("R", "utils.R"))
 #' @param excludes Dataframe containing regions to exclude
 #' @param includes Dataframe containing the only regions to include
 #' @param max_execution_time Integer specifying the timeout in seconds
-update_regional <- function(location, excludes, includes, force, max_execution_time) {
+update_regional <- function(location, excludes, includes, force, max_execution_time, data_root_dir = ".") {
 
   futile.logger::flog.info("Processing dataset for %s", location$name)
 
@@ -94,8 +94,8 @@ update_regional <- function(location, excludes, includes, force, max_execution_t
                            burn_in = 14, samples = 2000,
                            warmup = 500, fixed_future_rt = TRUE, cores = no_cores,
                            chains = ifelse(no_cores <= 2, 2, no_cores),
-                           target_folder = location$target_folder,
-                           summary_dir = location$summary_dir,
+                           target_folder = paste0(data_root_dir, "/", location$target_folder),
+                           summary_dir = paste0(data_root_dir, "/", location$summary_dir),
                            region_scale = location$region_scale,
                            return_estimates = FALSE,
                            verbose = FALSE,

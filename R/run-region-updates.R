@@ -38,6 +38,7 @@ rru_cli_interface <- function() {
     make_option(c("-w", "--werbose"), action = "store_true", default = FALSE, help = "Print v.verbose output "),
     make_option(c("-q", "--quiet"), action = "store_true", default = FALSE, help = "Print less output "),
     make_option(c("--log"), type = "character", help = "Specify log file name"),
+    make_option(c("--data-root-dir"), default = ".", type = "character", help = "Path to the directory that all output data directories will be saved in"),
     make_option(c("-e", "--exclude"), default = "", type = "character", help = "List of locations to exclude. See include for more details."),
     make_option(c("-i", "--include"), default = "", type = "character", help = "List of locations to include (excluding all non-specified), comma separated in the format region/subregion or region/*. Case Insensitive. Spaces can be included using quotes - e.g. \"united-states/rhode island, United-States/New York\""),
     make_option(c("-u", "--unstable"), action = "store_true", default = FALSE, help = "Include unstable locations"),
@@ -45,7 +46,8 @@ rru_cli_interface <- function() {
     make_option(c("-t", "--timeout"), type = "integer", default = Inf, help = "Specify the maximum execution time in seconds that each sublocation will be allowed to run for. Note this is not the overall run time.")
   )
 
-  args <- parse_args(OptionParser(option_list = option_list))
+  args <- parse_args(OptionParser(option_list = option_list),
+                     convert_hyphens_to_underscores = TRUE)
   return(args)
 }
 
@@ -68,7 +70,8 @@ rru_process_locations <- function(datasets, args, excludes, includes) {
                                                                                  excludes[region == location$name],
                                                                                  includes[region == location$name],
                                                                                  args$force,
-                                                                                 args$timeout)
+                                                                                 args$timeout,
+                                                                                 args$data_root_dir)
                                                                },
                                                                warning = function(w) {
                                                                  futile.logger::flog.warn("%s: %s - %s", location$name, w$mesage, toString(w$call))

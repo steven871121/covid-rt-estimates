@@ -7,7 +7,19 @@ source(here::here("R", "entities.R"))
 
 datasets <- c(
   Region$new(name = "united-kingdom",
-             covid_regional_data_identifier = "UK"),
+             covid_regional_data_identifier = "UK",
+             reporting_delay = readRDS(here::here("data", name-of-onset-to-admission-delay)),
+             case_modifier = function(cases) { put your cleaning code in here or remove if not needed}),
+  Region$new(name = "united-kingdom",
+             covid_regional_data_identifier = "UK",
+             dataset_folder_name = "deaths",
+             reporting_delay = readRDS(here::here("data", name-of-onset-to-death-delay)),
+             case_modifier = function(cases) { put your cleaning code in here or remove if not needed})
+  Region$new(name = "united-kingdom",
+             covid_regional_data_identifier = "UK",
+             dataset_folder_name = "admissions"
+             reporting_delay = readRDS(here::here("data", name-of-onset-to-admission-delay)),
+             case_modifier = function(cases) { put your cleaning code in here or remove if not needed})
   Region$new(name = "united-states",
              covid_regional_data_identifier = "USA",
              region_scale = "State"),

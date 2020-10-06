@@ -14,7 +14,7 @@ datasets <- c(
                                                               by = c("date")][, region := "United Kingdom"]
                cases <- data.table::rbindlist(list(cases, uk_cases),
                                                fill = TRUE, use.names = TRUE)},
-             stan_args = list(nhsregions = TRUE)),
+             data_args = list(nhsregions = TRUE)),
   Region$new(name = "united-kingdom",
              covid_regional_data_identifier = "UK",
              dataset_folder_name = "deaths",
@@ -26,7 +26,7 @@ datasets <- c(
                                                               by = c("date")][, region := "United Kingdom"]
                deaths <- data.table::rbindlist(list(deaths, uk_deaths),
                                                    fill = TRUE, use.names = TRUE)},
-             stan_args = list(nhsregions = TRUE)),
+             data_args = list(nhsregions = TRUE)),
   Region$new(name = "united-kingdom",
              covid_regional_data_identifier = "UK",
              dataset_folder_name = "admissions",
@@ -37,7 +37,7 @@ datasets <- c(
                                                                 by = c("date")][, region := "United Kingdom"]
                admissions <- data.table::rbindlist(list(admissions, uk_admissions),
                                                        fill = TRUE, use.names = TRUE)},
-             stan_args = list(nhsregions = TRUE)),
+             data_args = list(nhsregions = TRUE)),
   Region$new(name = "united-states",
              covid_regional_data_identifier = "USA",
              region_scale = "State"),

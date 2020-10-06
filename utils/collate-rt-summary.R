@@ -20,6 +20,6 @@ collate_estimates <- function(name){
   }
   
   # Save back to main UK folder
-  write.csv(rt, here::here("subnational", name, "collated", Sys.Date(), "uk-collated-rt.csv"), row.names = FALSE)
+  data.table::fwrite(rt, here::here("subnational", name, "collated", Sys.Date(), "uk-collated-rt.csv"))
   
 }

@@ -6,7 +6,7 @@ source(here::here("R", "entities.R"))
 # 2. ABC
 
 datasets <- c(
-  Region$new(name = "united-kingdom",
+  Region$new(name = "united-kingdom", # leaving this as the default UK for historic purposes
              covid_regional_data_identifier = "UK",
              case_modifier = function(cases) {
                national_cases <- cases[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
@@ -15,8 +15,9 @@ datasets <- c(
                cases <- data.table::rbindlist(list(cases, uk_cases),
                                                fill = TRUE, use.names = TRUE)},
              data_args = list(nhsregions = TRUE)),
-  Region$new(name = "united-kingdom",
+  Region$new(name = "united-kingdom-deaths",
              covid_regional_data_identifier = "UK",
+             folder_name = "united-kingdom",
              dataset_folder_name = "deaths",
              reporting_delay = readRDS(here::here("data", "cocin-onset-to-death-delay.rds")),
              case_modifier = function(deaths) {
@@ -27,8 +28,9 @@ datasets <- c(
                deaths <- data.table::rbindlist(list(deaths, uk_deaths),
                                                    fill = TRUE, use.names = TRUE)},
              data_args = list(nhsregions = TRUE)),
-  Region$new(name = "united-kingdom",
+  Region$new(name = "united-kingdom-admissions",
              covid_regional_data_identifier = "UK",
+             folder_name = "united-kingdom",
              dataset_folder_name = "admissions",
              case_modifier = function(admissions) {
                admissions <- admissions[, cases_new := hosp_new_blend]

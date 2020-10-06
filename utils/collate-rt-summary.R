@@ -8,11 +8,10 @@ collate_estimates <- function(name, target = "rt"){
   names(sources) <- list.files(here::here("subnational", name))
   
   # Read and bind
-  df <- purrr::discard(sources, grepl("collated", names(sources))) %>%
-    purrr::map(., ~ fread(.x)) %>%
-    dplyr::bind_rows(.id = "source") %>%
-    dplyr::filter(type == "estimate") %>%
-    dplyr::select(-type)
+  sources <- sources[!grepl("collated", names(sources))]
+  df <- lapply(sources, data.table::fread)
+  df <- data.table::rbindlist(df, idcol = "source")
+  df <- df[type %in% "estimate"][, type := NULL]
   
   # Check a collated file exists
   if(!dir.exists(here::here("subnational", name, "collated", target))){

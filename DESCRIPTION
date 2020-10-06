@@ -30,6 +30,7 @@ Imports:
   here,
   lubridate,
   optparse,
+  purrr,
   R6 (>= 2.4),
   rlang (>= 0.4.7)
 Remotes:

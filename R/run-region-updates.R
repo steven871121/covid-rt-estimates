@@ -281,41 +281,41 @@ loadStatusFile <- function(filename) {
     status$last_attempt <- strptime(status$last_attempt, "%Y-%m-%d %H:%M:%OS")
     status$latest_results <- strptime(status$latest_results, "%Y-%m-%d %H:%M:%OS")
     status$oldest_region_results <- strptime(status$oldest_region_results, "%Y-%m-%d %H:%M:%OS")
-    status$latest_resultsmax(cases$date, na.rm = TRUE)_data_up_to <- as.Date(status$latest_results_data_up_to, format = "%Y-%m-%d")
-} else {
-futile.logger::flog.trace("no existing status file, creating a blank table")
-status <- data.frame(
-dataset = character(),
-last_attempt = POSIXct(),
-last_attempt_status = character(),
-latest_results = POSIXct(),
-latest_results_status = character(),
-latest_results_data_up_to = Date(),
-latest_results_successful_regions = integer(),
-latest_results_timing_out_regions = integer(),
-latest_results_failing_regions = integer(),
-oldest_region_results = POSIXct()
-)
-}
-return(status)
+    status$latest_results_data_up_to <- as.Date(status$latest_results_data_up_to, format = "%Y-%m-%d")
+  } else {
+    futile.logger::flog.trace("no existing status file, creating a blank table")
+    status <- data.frame(
+      dataset = character(),
+      last_attempt = POSIXct(),
+      last_attempt_status = character(),
+      latest_results = POSIXct(),
+      latest_results_status = character(),
+      latest_results_data_up_to = Date(),
+      latest_results_successful_regions = integer(),
+      latest_results_timing_out_regions = integer(),
+      latest_results_failing_regions = integer(),
+      oldest_region_results = POSIXct()
+    )
+  }
+  return(status)
 }
 
 # only execute if this is the root, passing in datasets from dataset-list.R and the args from the cli interface
 # this bit handles the outer logging wrapping and top level error handling
-if (sys.nframe() == 0){
-args <- rru_cli_interface()
-setup_log_from_args(args)
-# tryCatch(withCallingHandlers(
-run_regional_updates(datasets = datasets, args = args)
-# ,
-#                            warning = function(w) {
-#                              futile.logger::flog.warn(w)
-#                              rlang::cnd_muffle(w)
-#                            },
-#                            error = function(e) {
-#                              futile.logger::flog.error(capture.output(rlang::trace_back()))
-#                            }),
-#        error = function(e) {
-#          futile.logger::flog.error(e)
-#        })
+if (sys.nframe() == 0) {
+  args <- rru_cli_interface()
+  setup_log_from_args(args)
+  # tryCatch(withCallingHandlers(
+  run_regional_updates(datasets = datasets, args = args)
+  # ,
+  #                            warning = function(w) {
+  #                              futile.logger::flog.warn(w)
+  #                              rlang::cnd_muffle(w)
+  #                            },
+  #                            error = function(e) {
+  #                              futile.logger::flog.error(capture.output(rlang::trace_back()))
+  #                            }),
+  #        error = function(e) {
+  #          futile.logger::flog.error(e)
+  #        })
 }

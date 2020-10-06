@@ -85,7 +85,7 @@ update_regional <- function(location, excludes, includes, force, max_execution_t
   if (cases[, .N] > 0 && (force || check_for_update(cases, last_run = here::here("last-update", paste0(location$name, ".rds"))))) {
     # Set up cores -----------------------------------------------------
     no_cores <- setup_future(length(unique(cases$region)))
-    
+
     if (refresh) {
       if (dir.exists(location$target_folder)) {
         futile.logger::flog.trace("removing estimates in order to refresh")
@@ -98,22 +98,22 @@ update_regional <- function(location, excludes, includes, force, max_execution_t
                            generation_time = location$generation_time,
                            delays = list(location$incubation_period, location$reporting_delay),
                            non_zero_points = 14, horizon = 14, burn_in = 14, samples = 4000,
-                           stan_args = list(warmup = 500, cores = no_cores, 
+                           stan_args = list(warmup = 500, cores = no_cores,
                                             chains = ifelse(no_cores <= 4, 4, no_cores)),
-                           fixed_future_rt = TRUE,  target_folder = location$target_folder,
+                           fixed_future_rt = TRUE, target_folder = location$target_folder,
                            return_estimates = FALSE, summary = TRUE,
                            return_timings = TRUE, future = TRUE,
                            max_execution_time = max_execution_time)
     futile.logger::flog.debug("resetting future plan to sequential")
     future::plan("sequential")
-    
+
     futile.logger::flog.trace("generating summary data")
     regional_summary(
-      reported_cases = cases, 
-      results_dir = location$target_folder, 
-      summary_dir =  location$summary_dir, 
+      reported_cases = cases,
+      results_dir = location$target_folder,
+      summary_dir = location$summary_dir,
       region_scale = location$region_scale,
-      all_regions =  "Region" %in% class(location),
+      all_regions = "Region" %in% class(location),
       return_summary = FALSE
     )
   } else {
@@ -122,5 +122,19 @@ update_regional <- function(location, excludes, includes, force, max_execution_t
   if (cases[, .N] == 0) {
     futile.logger::flog.warning("no cases left for region so not processing!")
   }
+  # add some stats
+  out$max_data_date <- max(cases$date, na.rm = TRUE)
+  out$oldest_results <- min(
+    strptime(
+      strsplit(
+        system(
+          paste0('for f in ', location$target_folder, '/*/latest/summary.rds; do git log -n 1 --pretty=format:"%ad" --date=iso -- "$f"; done'),
+          intern = TRUE),
+        '\\+\\d\\d\\d\\d',
+        perl = TRUE
+      )[[1]],
+      "%Y-%m-%d %H:%M:%S ")
+  )
+
   return(out)
 }

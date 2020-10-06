@@ -56,7 +56,7 @@ update_regional <- function(location, excludes, includes, force, max_execution_t
 
   if (typeof(location$case_modifier) == "closure") {
     futile.logger::flog.trace("Modifying data")
-    ftry(cases <- location$case_modifier(cases))
+    futile.logger::ftry(cases <- location$case_modifier(cases))
   }
 
   # Rename columns -------------------------------------------------------------

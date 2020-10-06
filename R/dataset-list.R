@@ -8,21 +8,36 @@ source(here::here("R", "entities.R"))
 datasets <- c(
   Region$new(name = "united-kingdom",
              covid_regional_data_identifier = "UK",
-             reporting_delay = readRDS(here::here("data", name-of-onset-to-admission-delay)),
-             case_modifier = function(cases) { put your cleaning code in here or remove if not needed},
-             stan_args = list(nhs = TRUE)),
+             case_modifier = function(cases) {
+               national_cases <- cases[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
+               uk_cases <- data.table::copy(national_cases)[, .(cases_new = sum(cases_new, na.rm = TRUE)),
+                                                              by = c("date")][, region := "United Kingdom"]
+               cases <- data.table::rbindlist(list(cases, uk_cases),
+                                               fill = TRUE, use.names = TRUE)},
+             stan_args = list(nhsregions = TRUE)),
   Region$new(name = "united-kingdom",
              covid_regional_data_identifier = "UK",
              dataset_folder_name = "deaths",
-             reporting_delay = readRDS(here::here("data", name-of-onset-to-death-delay)),
-             case_modifier = function(cases) { put your cleaning code in here or remove if not needed},
-             stan_args = list(nhs = TRUE))
+             reporting_delay = readRDS(here::here("data", "cocin-onset-to-death-delay.rds")),
+             case_modifier = function(deaths) {
+               deaths <- deaths[, cases_new := deaths_new]
+               national_deaths <- deaths[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
+               uk_deaths <- data.table::copy(national_deaths)[, .(cases_new = sum(cases_new, na.rm = TRUE)),
+                                                              by = c("date")][, region := "United Kingdom"]
+               deaths <- data.table::rbindlist(list(deaths, uk_deaths),
+                                                   fill = TRUE, use.names = TRUE)},
+             stan_args = list(nhsregions = TRUE)),
   Region$new(name = "united-kingdom",
              covid_regional_data_identifier = "UK",
-             dataset_folder_name = "admissions"
-             reporting_delay = readRDS(here::here("data", name-of-onset-to-admission-delay)),
-             case_modifier = function(cases) { put your cleaning code in here or remove if not needed},
-             stan_args = list(nhs = TRUE))
+             dataset_folder_name = "admissions",
+             case_modifier = function(admissions) {
+               admissions <- admissions[, cases_new := hosp_new_blend]
+               national_admissions <- admissions[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
+               uk_admissions <- data.table::copy(national_admissions)[, .(cases_new = sum(cases_new, na.rm = TRUE)),
+                                                                by = c("date")][, region := "United Kingdom"]
+               admissions <- data.table::rbindlist(list(admissions, uk_admissions),
+                                                       fill = TRUE, use.names = TRUE)},
+             stan_args = list(nhsregions = TRUE)),
   Region$new(name = "united-states",
              covid_regional_data_identifier = "USA",
              region_scale = "State"),

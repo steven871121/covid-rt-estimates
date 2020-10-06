@@ -9,7 +9,7 @@ datasets <- c(
   Region$new(name = "united-kingdom", # leaving this as the default UK for historic purposes
              covid_regional_data_identifier = "UK",
              case_modifier = function(cases) {
-               national_cases <- cases[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
+               national_cases <- cases[region %in% c("England", "Scotland", "Wales", "Northern Ireland")]
                uk_cases <- data.table::copy(national_cases)[, .(cases_new = sum(cases_new, na.rm = TRUE)),
                                                               by = c("date")][, region := "United Kingdom"]
                cases <- data.table::rbindlist(list(cases, uk_cases),
@@ -22,7 +22,7 @@ datasets <- c(
              reporting_delay = readRDS(here::here("data", "cocin_onset_to_death_delay.rds")),
              case_modifier = function(deaths) {
                deaths <- deaths[, cases_new := deaths_new]
-               national_deaths <- deaths[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
+               national_deaths <- deaths[region %in% c("England", "Scotland", "Wales", "Northern Ireland")]
                uk_deaths <- data.table::copy(national_deaths)[, .(cases_new = sum(cases_new, na.rm = TRUE)),
                                                               by = c("date")][, region := "United Kingdom"]
                deaths <- data.table::rbindlist(list(deaths, uk_deaths),
@@ -34,7 +34,7 @@ datasets <- c(
              dataset_folder_name = "admissions",
              case_modifier = function(admissions) {
                admissions <- admissions[, cases_new := hosp_new_blend]
-               national_admissions <- admissions[region %in% c("England", "Scotland", "Wales", "Northern Ireland"),]
+               national_admissions <- admissions[region %in% c("England", "Scotland", "Wales", "Northern Ireland")]
                uk_admissions <- data.table::copy(national_admissions)[, .(cases_new = sum(cases_new, na.rm = TRUE)),
                                                                 by = c("date")][, region := "United Kingdom"]
                admissions <- data.table::rbindlist(list(admissions, uk_admissions),
